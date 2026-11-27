@@ -2,14 +2,17 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vingadores: Doomsday — O Cerco a Latveria 3D</title>
+  <title>Vingadores: Doomsday</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Orbitron:wght@600;800;900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800;1,900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=35">
 
-  <!-- Three.js & Post-Processing Pipeline -->
+  <!-- Three.js r128 + Stylized Post-Processing Pipeline -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
@@ -19,248 +22,314 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 </head>
 <body>
-  <!-- 3D WebGL Viewport -->
   <div id="canvas-container"></div>
 
-  <!-- UI LAYER -->
   <div id="ui-overlay">
+    <div id="damage-vignette"></div>
 
-    <!-- =================================================
-         AAA MAIN MENU — 3D TURNTABLE HERO SELECTOR
-         ================================================= -->
+    <!-- ===================================================
+         MAIN MENU — HERO SHOWCASE (AAA HERO ACTION)
+         =================================================== -->
     <div id="main-menu" class="interactive">
-      <!-- Top Bar -->
       <header class="menu-topbar">
-        <div class="brand-lockup">
-          <span class="marvel-tag">MARVEL STUDIOS</span>
-          <h1 class="game-logo-title">AVENGERS: DOOMSDAY</h1>
+        <div class="brand-block">
+          <div class="brand-kicker">LATVÉRIA // MUNDO ABERTO 2700M // ATO I & II // RPG · 9 HERÓIS</div>
+          <h1 class="brand-title">VINGADORES <span>DOOMSDAY</span></h1>
         </div>
-        <div class="menu-server-info">
-          <button id="mute-toggle-btn" class="key-chip interactive" style="cursor:pointer; padding:6px 12px;">🔊 ÁUDIO: ATIVO (M)</button>
-          <span><i class="status-dot"></i>LATVERIA-01 (DOOMSTADT)</span>
+        <div class="top-actions">
+          <button id="mute-toggle-btn" class="skew-chip interactive" type="button">
+            <span id="mute-icon-slot" class="svg-slot"></span>
+            <span id="mute-text-slot">ÁUDIO (N)</span>
+          </button>
         </div>
       </header>
 
-      <!-- Left Column: Hero Roster -->
-      <aside class="roster-column">
-        <div class="column-header">SELECIONE SEU VINGADOR</div>
-        <div class="hero-roster-list" id="hero-roster-list">
-          <!-- Populated dynamically by game.js -->
+      <aside class="hero-kit-panel">
+        <div class="hero-header-badge">
+          <span id="sel-hero-class" class="class-tag">ACROBATA</span>
+          <span class="drag-hint">ARRASTE PARA GIRAR</span>
         </div>
-      </aside>
+        <h2 id="sel-hero-name" class="hero-display-name">HOMEM-ARANHA</h2>
+        <p id="sel-hero-sub" class="hero-display-sub">PETER PARKER // ARANHA DE FERRO</p>
 
-      <!-- Center Column: 3D Character Pedestal Showcase -->
-      <main class="showcase-center">
-        <div class="showcase-hero-banner">
-          <div class="showcase-hero-name" id="showcase-hero-name">DOUTOR ESTRANHO</div>
-          <div class="showcase-hero-epithet" id="showcase-hero-epithet">MAGO SUPREMO • PROTOCOLO MÍSTICO</div>
-        </div>
-      </main>
-
-      <!-- Right Column: Specs, Abilities & Latveria Mission Brief -->
-      <aside class="inspector-column">
-        <div class="inspector-card">
-          <div class="inspector-section-title">ATRIBUTOS DE COMBATE</div>
-          <div class="stat-grid">
-            <div class="stat-line">
-              <div class="stat-meta"><span>PODER DE ATAQUE</span><span id="stat-atk-val">94 / 100</span></div>
-              <div class="stat-track"><div class="stat-bar-fill" id="stat-atk-bar" style="width: 94%"></div></div>
-            </div>
-            <div class="stat-line">
-              <div class="stat-meta"><span>BLINDAGEM & DEFESA</span><span id="stat-def-val">82 / 100</span></div>
-              <div class="stat-track"><div class="stat-bar-fill" id="stat-def-bar" style="width: 82%"></div></div>
-            </div>
-            <div class="stat-line">
-              <div class="stat-meta"><span>MOBILIDADE</span><span id="stat-spd-val">76 / 100</span></div>
-              <div class="stat-track"><div class="stat-bar-fill" id="stat-spd-bar" style="width: 76%"></div></div>
+        <div class="kit-list">
+          <div class="kit-item">
+            <span class="kit-key">M1</span>
+            <div class="kit-copy">
+              <strong id="kit-primary-name">Combo Aranha</strong>
+              <p id="kit-primary-desc">Sequência ágil de 3 golpes.</p>
             </div>
           </div>
-        </div>
-
-        <div class="inspector-card">
-          <div class="inspector-section-title">ARSENAL & PODERES</div>
-          <div class="abilities-preview-list">
-            <div class="ability-preview-item">
-              <span class="ability-key-badge">M1</span>
-              <div class="ability-preview-text">
-                <h4 id="ab-m1-title">Mandala de Eldritch</h4>
-                <p id="ab-m1-desc">Lança discos arcanos giratórios que perfuram armaduras.</p>
-              </div>
-            </div>
-            <div class="ability-preview-item">
-              <span class="ability-key-badge">Q</span>
-              <div class="ability-preview-text">
-                <h4 id="ab-q-title">Escudo dos Serafins</h4>
-                <p id="ab-q-desc">Ativa uma barreira rúnica que bloqueia 85% do dano.</p>
-              </div>
-            </div>
-            <div class="ability-preview-item">
-              <span class="ability-key-badge">R</span>
-              <div class="ability-preview-text">
-                <h4 id="ab-r-title">Prisão da Dimensão Espelhada</h4>
-                <p id="ab-r-desc">Fratura a realidade ao redor de Destino, causando dano massivo.</p>
-              </div>
+          <div class="kit-item highlight">
+            <span id="kit-unique-key" class="kit-key">M2 / E</span>
+            <div class="kit-copy">
+              <strong id="kit-unique-name">Web Swing Físico</strong>
+              <p id="kit-unique-desc">Balanço real em pêndulo 3D.</p>
             </div>
           </div>
-        </div>
-
-        <div class="mission-brief-box">
-          <div class="mission-thumb"></div>
-          <div class="mission-brief-copy">
-            <h5>ALVO: CASTELO DE DOOM (LATVERIA)</h5>
-            <p>Atravesse a Avenida Imperial, destrua a guarda de Doombots e derrote Victor Von Doom no Salão do Trono.</p>
+          <div class="kit-item">
+            <span class="kit-key">Q</span>
+            <div class="kit-copy">
+              <strong id="kit-skill-name">Prisão de Teia</strong>
+              <p id="kit-skill-desc">Prende inimigos em rede de teias.</p>
+            </div>
+          </div>
+          <div class="kit-item ult">
+            <span class="kit-key">R</span>
+            <div class="kit-copy">
+              <strong id="kit-ult-name">Maximum Spider</strong>
+              <p id="kit-ult-desc">Tempestade sônica de área.</p>
+            </div>
           </div>
         </div>
       </aside>
 
-      <!-- Bottom Bar -->
-      <footer class="menu-bottombar">
-        <div class="controls-summary-strip">
-          <span><strong class="key-chip">WASD</strong>MOVER</span>
-          <span><strong class="key-chip">MOUSE</strong>CÂMERA</span>
-          <span><strong class="key-chip">SCROLL</strong>DISTÂNCIA DA CÂMERA</span>
-          <span><strong class="key-chip">SHIFT</strong>ESQUIVA / DASH</span>
-          <span><strong class="key-chip">ESPAÇO</strong>SALTO</span>
+      <footer class="menu-footer">
+        <div id="hero-roster-list" class="roster-strip interactive"></div>
+
+        <div class="launch-group">
+          <div class="controls-strip">
+            <span>WASD Mover</span>
+            <span>ESPAÇO 2x Pular/Voar</span>
+            <span>SHIFT Esquiva Perfeita</span>
+            <span>F Nanoreparo</span>
+            <span>M Mapa Tático</span>
+          </div>
+          <button id="start-game-btn" class="launch-btn interactive" type="button">
+            <span id="start-play-icon" class="svg-slot"></span>
+            <span>INICIAR INCURSÃO</span>
+          </button>
         </div>
-        <button id="start-game-btn" class="launch-btn">INICIAR INCURSÃO</button>
       </footer>
     </div>
 
-    <!-- =================================================
-         IN-GAME TACTICAL HUD
-         ================================================= -->
-    <div id="hud" class="hidden">
-      <!-- Floating Damage Numbers Container -->
-      <div id="damage-layer"></div>
+    <!-- ===================================================
+         IN-GAME COMBAT HUD
+         =================================================== -->
+    <div id="game-hud" class="hidden">
+      <div id="floating-dmg-container"></div>
+      <div id="target-lock-reticle" class="hidden"></div>
 
-      <!-- Top Row -->
-      <div class="hud-top-row">
-        <!-- Player Unit Frame -->
-        <div class="player-unit-frame">
-          <div class="unit-avatar-ring" id="hud-avatar">🔮</div>
-          <div class="unit-bars-stack">
-            <div class="unit-name-row">
-              <span class="unit-hero-name" id="hud-hero-name">DOUTOR ESTRANHO</span>
-              <span class="unit-hp-numbers" id="hud-hp-text">520 / 520</span>
+      <!-- Top Center: Compact Mission Tracker OR Boss HP + Posture Bar -->
+      <div class="hud-top-center">
+        <div id="mission-pill" class="mission-pill">
+          <span class="mission-dot"></span>
+          <span id="mission-text">ATRAVESSE LATVÉRIA // QUEBRE OS 3 SELOS IMPERIAIS</span>
+          <span id="hud-seals-count" class="seals-pill">SELOS: 0/3</span>
+        </div>
+
+        <div id="boss-bar-wrap" class="boss-bar-wrap hidden">
+          <div class="boss-title-row">
+            <span class="boss-name-wrap">
+              <span id="boss-crown-icon" class="svg-slot boss-crown"></span>
+              <strong>DOUTOR VICTOR VON DOOM</strong>
+            </span>
+            <span id="boss-phase-tag" class="boss-phase">FASE 1 // SOBERANO</span>
+          </div>
+          <div class="boss-hp-track">
+            <div id="boss-hp-trail" class="boss-hp-trail"></div>
+            <div id="boss-hp-fill" class="boss-hp-fill"></div>
+            <div class="boss-phase-notch"></div>
+          </div>
+          <div class="boss-posture-track" title="Postura do Boss">
+            <div id="boss-posture-fill" class="boss-posture-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Right: Clean Circular Tactical Radar + Biome & Progress Chip -->
+      <div class="hud-top-right">
+        <div class="radar-frame">
+          <canvas id="minimap-canvas" width="144" height="144"></canvas>
+          <span class="radar-north">N</span>
+        </div>
+        <div id="ow-biome-chip" class="ow-biome-chip">
+          <span id="ow-biome-name">VALE DE DOOMSTADT</span>
+          <span id="ow-progress-chip">SELOS 0/3 · BOSSES 0/4 · NV.1</span>
+        </div>
+      </div>
+
+      <!-- Center Screen: Crosshair, Hitmarker, Event Banner & Combo -->
+      <div class="crosshair-wrap">
+        <div class="crosshair-dot"></div>
+        <div class="crosshair-ticks"></div>
+        <div id="hitmarker" class="hitmarker"></div>
+      </div>
+
+      <div id="event-banner" class="event-banner">ESQUIVA PERFEITA</div>
+
+      <div id="combo-display" class="combo-display hidden">
+        <span id="combo-rank" class="combo-rank">A</span>
+        <span id="combo-count" class="combo-count">1X</span>
+      </div>
+
+      <!-- Bottom Left: Hero Plate, Segmented HP, Unique Resource, Stamina & Repair Flasks -->
+      <div class="hud-bottom-left">
+        <div class="hero-plate">
+          <div id="hud-hero-emblem" class="hero-plate-emblem"></div>
+          <div class="hero-plate-bars">
+            <div class="hero-plate-top">
+              <strong id="hud-hero-name">HOMEM-ARANHA</strong>
+              <span id="hud-level-badge" class="hud-level-badge">NV. 1</span>
+              <span id="hud-hp-text" class="hp-readout">540 / 540</span>
             </div>
-            <div class="bar-track-lg">
-              <div id="hud-health-fill" class="hp-bar-inner"></div>
+            <div class="hp-track">
+              <div id="hud-hp-trail" class="hp-trail"></div>
+              <div id="hud-hp-fill" class="hp-fill"></div>
+              <div class="hp-segments"></div>
             </div>
-            <div class="sub-bars-duo">
-              <div>
-                <div class="sub-bar-labels"><span>ENERGIA</span></div>
-                <div class="bar-track-sm"><div id="hud-energy-fill" class="energy-bar-inner"></div></div>
+            <div class="resource-row">
+              <span id="hud-resource-label" class="resource-label">ENERGIA</span>
+              <div class="resource-track">
+                <div id="hud-resource-fill" class="resource-fill"></div>
               </div>
-              <div>
-                <div class="sub-bar-labels"><span>SUPREMO (R)</span></div>
-                <div class="bar-track-sm"><div id="hud-ult-fill" class="ult-bar-inner"></div></div>
+            </div>
+            <div class="xp-row">
+              <span id="hud-xp-label" class="xp-label">XP 0/120</span>
+              <div class="xp-track"><div id="hud-xp-fill" class="xp-fill"></div></div>
+            </div>
+            <div class="sub-bars-row">
+              <div class="stamina-track">
+                <div id="hud-stamina-fill" class="stamina-fill"></div>
+              </div>
+              <div class="flask-badge">
+                <span id="flask-icon-slot" class="svg-slot"></span>
+                <span class="flask-key">F</span>
+                <strong id="hud-flask-count">3</strong>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Top Right Objective & Radar Minimap -->
-        <div class="hud-top-right">
-          <div class="objective-tracker-box">
-            <div class="tracker-header">DIRETRIZ DE MISSÃO</div>
-            <div class="tracker-text" id="obj-step">Atravesse a Avenida Imperial de Latveria até o Castelo de Doom</div>
-            <div class="tracker-distance" id="tracker-distance">DISTÂNCIA DO ALVO: 195m</div>
+      <!-- Bottom Center: Tactical Ability Dock (only active cooldown abilities) -->
+      <div class="hud-bottom-center">
+        <div class="ability-dock">
+          <div class="ability-slot passive-slot hidden">
+            <span class="slot-key">M1</span>
+            <span id="dock-icon-m1" class="svg-slot slot-ico"></span>
+            <span id="slot-m1-label" class="slot-lbl">Combo</span>
           </div>
-          <div class="radar-frame">
-            <canvas id="minimap-canvas" width="140" height="140"></canvas>
+          <div class="ability-slot accent">
+            <span class="slot-key">M2</span>
+            <span id="dock-icon-m2" class="svg-slot slot-ico"></span>
+            <span id="slot-m2-label" class="slot-lbl">Swing</span>
+            <div id="cd-m2" class="cd-overlay"></div>
+          </div>
+          <div class="ability-slot passive-slot hidden">
+            <span class="slot-key">E</span>
+            <span id="dock-icon-e" class="svg-slot slot-ico"></span>
+            <span id="slot-e-label" class="slot-lbl">Mov</span>
+          </div>
+          <div class="ability-slot">
+            <span class="slot-key">Q</span>
+            <span id="dock-icon-q" class="svg-slot slot-ico"></span>
+            <span id="slot-q-label" class="slot-lbl">Especial</span>
+            <div id="cd-q" class="cd-overlay"></div>
+          </div>
+          <div id="slot-1" class="ability-slot rpg-slot locked">
+            <span class="slot-key">1</span>
+            <span id="slot-1-label" class="slot-lbl">Nv.2</span>
+            <div id="cd-1" class="cd-overlay"></div>
+          </div>
+          <div id="slot-2" class="ability-slot rpg-slot locked">
+            <span class="slot-key">2</span>
+            <span id="slot-2-label" class="slot-lbl">Nv.4</span>
+            <div id="cd-2" class="cd-overlay"></div>
+          </div>
+          <div id="slot-3" class="ability-slot rpg-slot locked">
+            <span class="slot-key">3</span>
+            <span id="slot-3-label" class="slot-lbl">Nv.7</span>
+            <div id="cd-3" class="cd-overlay"></div>
+          </div>
+          <div class="ability-slot passive-slot hidden">
+            <span class="slot-key">SHIFT</span>
+            <span id="dock-icon-shift" class="svg-slot slot-ico"></span>
+            <span class="slot-lbl">Esquiva</span>
+            <div id="cd-shift" class="cd-overlay"></div>
+          </div>
+          <div id="slot-r" class="ability-slot ult-slot">
+            <svg class="ult-svg-ring" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" class="ult-ring-bg"/>
+              <circle cx="26" cy="26" r="22" id="ult-ring-progress" class="ult-ring-fg"/>
+            </svg>
+            <span class="slot-key">R</span>
+            <span id="dock-icon-r" class="svg-slot slot-ico"></span>
+            <span id="hud-ult-pct" class="ult-pct">0%</span>
+            <span id="slot-r-label" class="slot-lbl">Supremo</span>
           </div>
         </div>
       </div>
 
-      <!-- Boss Health Bar -->
-      <div id="boss-health-card" class="boss-health-card hidden">
-        <div class="boss-header-line">
-          <span class="boss-name-label">👑 DOUTOR VICTOR VON DOOM</span>
-          <span class="boss-phase-badge" id="boss-phase-text">FASE 1: SOBERANO DE LATVERIA</span>
+      <div class="hud-bottom-right-hint hidden">
+        <span>CLIQUE TRAVA MIRA</span>
+        <span>1–3 PODERES RPG</span>
+        <span>K EVOLUÇÃO RPG</span>
+        <span>M MAPA</span>
+        <span>P PAUSAR</span>
+      </div>
+    </div>
+
+    <!-- ===================================================
+         CINEMATIC CUTSCENE OVERLAY
+         =================================================== -->
+    <div id="cutscene-overlay" class="cutscene-overlay hidden">
+      <div class="letterbox-bar top"></div>
+      <div id="cutscene-boss-card" class="cutscene-boss-card hidden">
+        <span id="cutscene-boss-sub" class="cutscene-boss-sub">FASE</span>
+        <h2 id="cutscene-boss-title" class="cutscene-boss-title">CHEFE</h2>
+      </div>
+      <div class="letterbox-bar bottom">
+        <div class="cutscene-dialog">
+          <strong id="cutscene-speaker">SISTEMA</strong>
+          <p id="cutscene-line">Carregando...</p>
         </div>
-        <div class="boss-hp-track">
-          <div id="boss-health-fill" class="boss-hp-fill"></div>
-        </div>
+        <button id="cutscene-skip-btn" class="cutscene-skip-btn interactive" type="button">[ESPAÇO / CLIQUE] PULAR</button>
       </div>
+    </div>
 
-      <!-- Over-The-Shoulder Tactical Reticle -->
-      <div class="reticle-wrapper">
-        <div class="reticle-ring" id="reticle-ring"></div>
-        <div class="reticle-dot"></div>
-        <div class="reticle-tick t-top"></div>
-        <div class="reticle-tick t-bot"></div>
-        <div class="reticle-tick t-left"></div>
-        <div class="reticle-tick t-right"></div>
-      </div>
-
-      <!-- Combo Counter -->
-      <div class="combo-badge" id="combo-badge">
-        <div class="combo-count" id="combo-count">3x</div>
-        <div class="combo-label">COMBO VINGADOR</div>
-      </div>
-
-      <!-- Cinematic Notification Banner -->
-      <div id="notification-banner">
-        <div class="notify-title" id="notify-title">LATVERIA</div>
-        <div class="notify-desc" id="notify-desc">Infiltre a Fortaleza de Victor Von Doom</div>
-      </div>
-
-      <!-- Bottom Row -->
-      <div class="hud-bottom-row">
-        <div class="abilities-dock">
-          <div class="ability-slot">
-            <span class="slot-keybind">M1</span>
-            <div class="slot-box ready">💥</div>
-            <span class="slot-label" id="slot-m1-label">Disparo</span>
-          </div>
-          <div class="ability-slot">
-            <span class="slot-keybind">Q</span>
-            <div class="slot-box ready">
-              🛡️
-              <div class="slot-cd-fill" id="skill-cd-overlay"></div>
-            </div>
-            <span class="slot-label" id="slot-q-label">Habilidade</span>
-          </div>
-          <div class="ability-slot">
-            <span class="slot-keybind">SHIFT</span>
-            <div class="slot-box ready">💨</div>
-            <span class="slot-label">Esquiva</span>
-          </div>
-          <div class="ability-slot">
-            <span class="slot-keybind">ESPAÇO</span>
-            <div class="slot-box ready">🦘</div>
-            <span class="slot-label">Salto</span>
-          </div>
-          <div class="ability-slot">
-            <span class="slot-keybind">R</span>
-            <div class="slot-box" id="slot-ult-box">⚡</div>
-            <span class="slot-label" id="slot-r-label">Supremo</span>
-          </div>
-        </div>
-
-        <div class="camera-hint-box">
-          <div><strong class="key-chip">SCROLL</strong> Ajustar Zoom da Câmera (7m - 20m)</div>
-          <div><strong class="key-chip">CLICK</strong> Travar Mira 3ª Pessoa</div>
+    <!-- PAUSE & END OVERLAYS -->
+    <div id="pause-overlay" class="modal-backdrop hidden interactive">
+      <div class="modal-card">
+        <div class="modal-kicker">SISTEMA TÁTICO // LATVÉRIA</div>
+        <h2>COMBATE PAUSADO</h2>
+        <div class="modal-actions">
+          <button id="resume-btn" class="launch-btn interactive" type="button">CONTINUAR</button>
+          <button id="pause-restart-btn" class="skew-chip interactive" type="button">REINICIAR FASE</button>
+          <button id="pause-menu-btn" class="skew-chip interactive" type="button">MENU INICIAL (RESETA)</button>
         </div>
       </div>
     </div>
 
-    <!-- =================================================
-         VICTORY / DEFEAT MODAL
-         ================================================= -->
-    <div id="end-game-modal">
-      <h2 id="modal-title" class="modal-title victory">VITÓRIA VINGADORA!</h2>
-      <p id="modal-desc" class="modal-desc">Victor Von Doom foi derrotado no Salão do Trono!</p>
-      <button id="modal-restart-btn" class="launch-btn interactive">VOLTAR AO MENU PRINCIPAL</button>
+    <div id="end-overlay" class="modal-backdrop hidden interactive">
+      <div class="modal-card">
+        <div class="modal-kicker">RELATÓRIO DA INCURSÃO</div>
+        <h2 id="end-title">VITÓRIA DOS VINGADORES</h2>
+        <p id="end-subtitle">O trono de Latvéria foi conquistado.</p>
+        <div class="modal-actions">
+          <button id="retry-btn" class="launch-btn interactive" type="button">JOGAR NOVAMENTE</button>
+          <button id="menu-btn" class="skew-chip interactive" type="button">SELEÇÃO DE HERÓIS</button>
+        </div>
+      </div>
     </div>
-
   </div>
 
-  <!-- Scripts -->
-  <script src="audio.js"></script>
-  <script src="shaders.js"></script>
-  <script src="characters.js"></script>
-  <script src="world.js"></script>
-  <script src="game.js"></script>
+  <script src="shaders.js?v=35"></script>
+  <script src="shaders_expansion.js?v=35"></script>
+  <script src="vfx_engine.js?v=35"></script>
+  <script src="world.js?v=35"></script>
+  <script src="world_open.js?v=35"></script>
+  <script src="characters.js?v=35"></script>
+  <script src="heroes_expansion.js?v=35"></script>
+  <script src="characters_v2.js?v=35"></script>
+  <script src="audio.js?v=35"></script>
+  <script src="game.js?v=35"></script>
+  <script src="game_openworld.js?v=35"></script>
+  <script src="powers_cutscenes.js?v=35"></script>
+  <script src="vfx_pro.js?v=35"></script>
+  <script src="models_anim_vfx_v5.js?v=35"></script>
+  <script src="integration_v6.js?v=35"></script>
+  <script src="rpg_expansion_v7.js?v=35"></script>
+<script src="hero_skills_v8.js?v=35"></script>
 </body>
 </html>
